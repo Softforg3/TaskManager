@@ -2,6 +2,6 @@ Mutation:
     type: object
     config:
         fields:
-            _empty:
-                type: "String"
-                resolve: "null"
+            syncUsers:
+                type: "Boolean!"
+                resolve: "@=service('App\\\\Infrastructure\\\\GraphQL\\\\Resolver\\\\UserResolver').syncUsers()"

@@ -2,6 +2,9 @@ Query:
     type: object
     config:
         fields:
-            _empty:
-                type: "String"
-                resolve: "null"
+            me:
+                type: "User"
+                resolve: "@=service('App\\\\Infrastructure\\\\GraphQL\\\\Resolver\\\\UserResolver').me()"
+            users:
+                type: "[User!]!"
+                resolve: "@=service('App\\\\Infrastructure\\\\GraphQL\\\\Resolver\\\\UserResolver').users()"
