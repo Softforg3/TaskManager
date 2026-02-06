@@ -1,0 +1,89 @@
+{
+	"info": {
+		"name": "TaskManager API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		}
+	],
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"Bret\",\n    \"password\": \"Program@2026\"\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/api/login", "host": ["{{baseUrl}}"], "path": ["api", "login"]}
+					}
+				},
+				{
+					"name": "Me",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{baseUrl}}/api/me", "host": ["{{baseUrl}}"], "path": ["api", "me"]}
+					}
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "List users",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{baseUrl}}/api/users", "host": ["{{baseUrl}}"], "path": ["api", "users"]}
+					}
+				},
+				{
+					"name": "Sync users",
+					"request": {
+						"method": "POST",
+						"url": {"raw": "{{baseUrl}}/api/users/sync", "host": ["{{baseUrl}}"], "path": ["api", "users", "sync"]}
+					}
+				}
+			]
+		},
+		{
+			"name": "GraphQL",
+			"item": [
+				{
+					"name": "me",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\"query\": \"{ me { id name email username role } }\"}"},
+						"url": {"raw": "{{baseUrl}}/graphql/", "host": ["{{baseUrl}}"], "path": ["graphql", ""]}
+					}
+				},
+				{
+					"name": "users",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\"query\": \"{ users { id name email username role } }\"}"},
+						"url": {"raw": "{{baseUrl}}/graphql/", "host": ["{{baseUrl}}"], "path": ["graphql", ""]}
+					}
+				},
+				{
+					"name": "syncUsers",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\"query\": \"mutation { syncUsers }\"}"},
+						"url": {"raw": "{{baseUrl}}/graphql/", "host": ["{{baseUrl}}"], "path": ["graphql", ""]}
+					}
+				}
+			]
+		}
+	]
+}
