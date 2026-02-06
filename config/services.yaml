@@ -11,6 +11,27 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
+    App\Infrastructure\Bus\MessengerCommandBus:
+        arguments:
+            $commandBus: '@command.bus'
+
+    App\Infrastructure\Bus\MessengerQueryBus:
+        arguments:
+            $queryBus: '@query.bus'
+
+    App\Infrastructure\Bus\MessengerEventBus:
+        arguments:
+            $eventBus: '@event.bus'
+
+    App\Application\Shared\Bus\CommandBusInterface:
+        alias: App\Infrastructure\Bus\MessengerCommandBus
+
+    App\Application\Shared\Bus\QueryBusInterface:
+        alias: App\Infrastructure\Bus\MessengerQueryBus
+
+    App\Application\Shared\Bus\EventBusInterface:
+        alias: App\Infrastructure\Bus\MessengerEventBus
+
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
@@ -18,3 +39,10 @@ services:
         exclude:
             - '../src/DependencyInjection/'
             - '../src/Kernel.php'
+
+    App\Application\User\Factory\UserFactory:
+        arguments:
+            $defaultPassword: '%env(DEFAULT_USER_PASSWORD)%'
+
+    App\Domain\User\UserRepositoryInterface:
+        alias: App\Infrastructure\Persistence\DoctrineUserRepository
