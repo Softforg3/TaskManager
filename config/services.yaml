@@ -27,3 +27,9 @@ services:
 
     App\Domain\User\UserRepositoryInterface:
         alias: App\Infrastructure\Persistence\DoctrineUserRepository
+
+    App\Domain\Task\TaskRepositoryInterface:
+        alias: App\Infrastructure\Persistence\DoctrineTaskRepository
+
+    App\Domain\Task\Factory\TaskFactoryInterface:
+        alias: App\Application\Task\Factory\TaskFactory
