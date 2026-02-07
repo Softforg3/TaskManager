@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Users - TaskManager{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="#">TaskManager</a>
+        <div class="d-flex align-items-center">
+            <a href="{{ path('web_users') }}" class="nav-link me-3 fw-bold">Users</a>
+            <span class="navbar-text me-3">
+                {{ app.user.name }}
+                <span class="badge {{ app.user.role.value == 'ROLE_ADMIN' ? 'badge-admin' : 'badge-member' }}">
+                    {{ app.user.role.value == 'ROLE_ADMIN' ? 'Admin' : 'Member' }}
+                </span>
+            </span>
+            <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block body %}
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">{{ message }}</div>
+{% endfor %}
+<div class="card">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Users ({{ users|length }})</h5>
+        <form method="post" action="{{ path('web_users_sync') }}" class="d-inline">
+            <button type="submit" class="btn btn-primary btn-sm">Sync from API</button>
+        </form>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td><small class="text-muted">{{ user.externalId }}</small></td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <span class="badge {{ user.role == 'ROLE_ADMIN' ? 'badge-admin' : 'badge-member' }}">
+                            {{ user.role == 'ROLE_ADMIN' ? 'Admin' : 'Member' }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
