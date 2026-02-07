@@ -8,3 +8,18 @@ Query:
             users:
                 type: "[User!]!"
                 resolve: "@=service('App\\\\Infrastructure\\\\GraphQL\\\\Resolver\\\\UserResolver').users()"
+            tasks:
+                type: "[Task!]!"
+                args:
+                    userId:
+                        type: "String"
+                resolve: "@=service('App\\\\Infrastructure\\\\GraphQL\\\\Resolver\\\\TaskResolver').tasks(args['userId'])"
+            allTasks:
+                type: "[Task!]!"
+                resolve: "@=service('App\\\\Infrastructure\\\\GraphQL\\\\Resolver\\\\TaskResolver').allTasks()"
+            taskHistory:
+                type: "[TaskEvent!]!"
+                args:
+                    taskId:
+                        type: "String!"
+                resolve: "@=service('App\\\\Infrastructure\\\\GraphQL\\\\Resolver\\\\TaskResolver').taskHistory(args['taskId'])"

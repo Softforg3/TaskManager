@@ -1,0 +1,14 @@
+TaskEvent:
+    type: object
+    config:
+        fields:
+            id:
+                type: "Int!"
+            aggregateId:
+                type: "String!"
+            eventType:
+                type: "String!"
+            payload:
+                type: "String!"
+            occurredAt:
+                type: "String!"
