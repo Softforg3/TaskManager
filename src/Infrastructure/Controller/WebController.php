@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller;
 
 use App\Application\User\Command\SyncUsersCommand;
+use App\Domain\Task\TaskRepositoryInterface;
+use App\Domain\User\User;
 use App\Domain\User\UserRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -45,5 +47,21 @@ class WebController extends AbstractController
         $this->addFlash('success', sprintf('Synced %d users from JSONPlaceholder API.', $count));
 
         return $this->redirectToRoute('web_users');
+    }
+
+    #[Route('/panel/tasks', name: 'web_tasks', methods: ['GET'])]
+    public function tasks(
+        TaskRepositoryInterface $taskRepository,
+        UserRepositoryInterface $userRepository,
+    ): Response {
+        $users = [];
+        foreach ($userRepository->findAll() as $user) {
+            $users[$user->getId()->toString()] = $user;
+        }
+
+        return $this->render('tasks/list.html.twig', [
+            'tasks' => $taskRepository->findAll(),
+            'users' => $users,
+        ]);
     }
 }
