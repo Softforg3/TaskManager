@@ -38,6 +38,7 @@ services:
         resource: '../src/'
         exclude:
             - '../src/DependencyInjection/'
+            - '../src/Domain/*/Event/'
             - '../src/Kernel.php'
 
     App\Application\User\Factory\UserFactory:
@@ -46,3 +47,12 @@ services:
 
     App\Domain\User\UserRepositoryInterface:
         alias: App\Infrastructure\Persistence\DoctrineUserRepository
+
+    App\Domain\Task\TaskRepositoryInterface:
+        alias: App\Infrastructure\Persistence\DoctrineTaskRepository
+
+    App\Domain\Task\Factory\TaskFactoryInterface:
+        alias: App\Application\Task\Factory\TaskFactory
+
+    App\Domain\Shared\Event\EventStoreInterface:
+        alias: App\Infrastructure\Messaging\DoctrineEventStore
