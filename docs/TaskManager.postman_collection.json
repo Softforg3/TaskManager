@@ -1,0 +1,221 @@
+{
+	"info": {
+		"name": "TaskManager API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{"key": "baseUrl", "value": "http://localhost:8080"},
+		{"key": "userId", "value": ""},
+		{"key": "taskId", "value": ""}
+	],
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login (admin)",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"Bret\",\n    \"password\": \"Program@2026\"\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/api/login", "host": ["{{baseUrl}}"], "path": ["api", "login"]}
+					}
+				},
+				{
+					"name": "Login (member)",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"Antonette\",\n    \"password\": \"Program@2026\"\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/api/login", "host": ["{{baseUrl}}"], "path": ["api", "login"]}
+					}
+				},
+				{
+					"name": "Me",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{baseUrl}}/api/me", "host": ["{{baseUrl}}"], "path": ["api", "me"]}
+					}
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "List users",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{baseUrl}}/api/users", "host": ["{{baseUrl}}"], "path": ["api", "users"]}
+					}
+				},
+				{
+					"name": "Sync users",
+					"request": {
+						"method": "POST",
+						"url": {"raw": "{{baseUrl}}/api/users/sync", "host": ["{{baseUrl}}"], "path": ["api", "users", "sync"]}
+					}
+				}
+			]
+		},
+		{
+			"name": "Tasks",
+			"item": [
+				{
+					"name": "List tasks",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{baseUrl}}/api/tasks", "host": ["{{baseUrl}}"], "path": ["api", "tasks"]}
+					}
+				},
+				{
+					"name": "List tasks by user",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/tasks?userId={{userId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "tasks"],
+							"query": [{"key": "userId", "value": "{{userId}}"}]
+						}
+					}
+				},
+				{
+					"name": "Create task",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Przygotowac raport kwartalny\",\n    \"description\": \"Zestawienie wynikow sprzedazy Q1 2026\",\n    \"assignedUserId\": \"{{userId}}\"\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/api/tasks", "host": ["{{baseUrl}}"], "path": ["api", "tasks"]}
+					}
+				},
+				{
+					"name": "Start task (TODO -> IN_PROGRESS)",
+					"request": {
+						"method": "PATCH",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"IN_PROGRESS\"\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/api/tasks/{{taskId}}/status", "host": ["{{baseUrl}}"], "path": ["api", "tasks", "{{taskId}}", "status"]}
+					}
+				},
+				{
+					"name": "Complete task (IN_PROGRESS -> DONE)",
+					"request": {
+						"method": "PATCH",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"DONE\"\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/api/tasks/{{taskId}}/status", "host": ["{{baseUrl}}"], "path": ["api", "tasks", "{{taskId}}", "status"]}
+					}
+				},
+				{
+					"name": "Task history",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{baseUrl}}/api/tasks/{{taskId}}/history", "host": ["{{baseUrl}}"], "path": ["api", "tasks", "{{taskId}}", "history"]}
+					}
+				}
+			]
+		},
+		{
+			"name": "GraphQL",
+			"item": [
+				{
+					"name": "me",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\"query\": \"{ me { id name email username role } }\"}"},
+						"url": {"raw": "{{baseUrl}}/graphql/", "host": ["{{baseUrl}}"], "path": ["graphql", ""]}
+					}
+				},
+				{
+					"name": "users",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\"query\": \"{ users { id externalId name email username role } }\"}"},
+						"url": {"raw": "{{baseUrl}}/graphql/", "host": ["{{baseUrl}}"], "path": ["graphql", ""]}
+					}
+				},
+				{
+					"name": "syncUsers",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\"query\": \"mutation { syncUsers }\"}"},
+						"url": {"raw": "{{baseUrl}}/graphql/", "host": ["{{baseUrl}}"], "path": ["graphql", ""]}
+					}
+				},
+				{
+					"name": "allTasks",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\"query\": \"{ allTasks { id title description status assignedUserId createdAt updatedAt } }\"}"},
+						"url": {"raw": "{{baseUrl}}/graphql/", "host": ["{{baseUrl}}"], "path": ["graphql", ""]}
+					}
+				},
+				{
+					"name": "tasksByUser",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\"query\": \"{ tasksByUser(userId: \\\"{{userId}}\\\") { id title status assignedUserId } }\"}"},
+						"url": {"raw": "{{baseUrl}}/graphql/", "host": ["{{baseUrl}}"], "path": ["graphql", ""]}
+					}
+				},
+				{
+					"name": "createTask",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\"query\": \"mutation { createTask(title: \\\"Przygotowac raport\\\", description: \\\"Zestawienie wynikow Q1\\\", assignedUserId: \\\"{{userId}}\\\") { id title status createdAt } }\"}"},
+						"url": {"raw": "{{baseUrl}}/graphql/", "host": ["{{baseUrl}}"], "path": ["graphql", ""]}
+					}
+				},
+				{
+					"name": "startTask (TODO -> IN_PROGRESS)",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\"query\": \"mutation { updateTaskStatus(taskId: \\\"{{taskId}}\\\", newStatus: \\\"IN_PROGRESS\\\") { id title status updatedAt } }\"}"},
+						"url": {"raw": "{{baseUrl}}/graphql/", "host": ["{{baseUrl}}"], "path": ["graphql", ""]}
+					}
+				},
+				{
+					"name": "completeTask (IN_PROGRESS -> DONE)",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\"query\": \"mutation { updateTaskStatus(taskId: \\\"{{taskId}}\\\", newStatus: \\\"DONE\\\") { id title status updatedAt } }\"}"},
+						"url": {"raw": "{{baseUrl}}/graphql/", "host": ["{{baseUrl}}"], "path": ["graphql", ""]}
+					}
+				},
+				{
+					"name": "taskHistory",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\"query\": \"{ taskHistory(taskId: \\\"{{taskId}}\\\") { id aggregateId eventType payload occurredAt } }\"}"},
+						"url": {"raw": "{{baseUrl}}/graphql/", "host": ["{{baseUrl}}"], "path": ["graphql", ""]}
+					}
+				}
+			]
+		}
+	]
+}
