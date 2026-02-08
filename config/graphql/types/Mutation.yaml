@@ -2,6 +2,24 @@ Mutation:
     type: object
     config:
         fields:
-            _empty:
-                type: "String"
-                resolve: "'placeholder'"
+            syncUsers:
+                type: "Boolean!"
+                resolve: "@=service('App\\\\Infrastructure\\\\GraphQL\\\\Resolver\\\\UserResolver').syncUsers()"
+            createTask:
+                type: "Task!"
+                args:
+                    title:
+                        type: "String!"
+                    description:
+                        type: "String!"
+                    assignedUserId:
+                        type: "String!"
+                resolve: "@=service('App\\\\Infrastructure\\\\GraphQL\\\\Resolver\\\\TaskResolver').createTask(args['title'], args['description'], args['assignedUserId'])"
+            updateTaskStatus:
+                type: "Task!"
+                args:
+                    taskId:
+                        type: "String!"
+                    newStatus:
+                        type: "String!"
+                resolve: "@=service('App\\\\Infrastructure\\\\GraphQL\\\\Resolver\\\\TaskResolver').updateTaskStatus(args['taskId'], args['newStatus'])"

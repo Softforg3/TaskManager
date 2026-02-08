@@ -41,6 +41,11 @@ services:
             - '../src/Domain/*/Event/'
             - '../src/Kernel.php'
 
+    # GraphQL resolvers need to be public for OverblogGraphQLBundle
+    App\Infrastructure\GraphQL\Resolver\:
+        resource: '../src/Infrastructure/GraphQL/Resolver/'
+        public: true
+
     App\Application\User\Factory\UserFactory:
         arguments:
             $defaultPassword: '%env(DEFAULT_USER_PASSWORD)%'

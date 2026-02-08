@@ -1,0 +1,16 @@
+User:
+    type: object
+    config:
+        fields:
+            id:
+                type: "String!"
+            externalId:
+                type: "Int!"
+            name:
+                type: "String!"
+            email:
+                type: "String!"
+            username:
+                type: "String!"
+            role:
+                type: "String!"

@@ -2,6 +2,24 @@ Query:
     type: object
     config:
         fields:
-            _empty:
-                type: "String"
-                resolve: "'placeholder'"
+            me:
+                type: "User"
+                resolve: "@=service('App\\\\Infrastructure\\\\GraphQL\\\\Resolver\\\\UserResolver').me()"
+            users:
+                type: "[User!]!"
+                resolve: "@=service('App\\\\Infrastructure\\\\GraphQL\\\\Resolver\\\\UserResolver').users()"
+            allTasks:
+                type: "[Task!]!"
+                resolve: "@=service('App\\\\Infrastructure\\\\GraphQL\\\\Resolver\\\\TaskResolver').allTasks()"
+            tasksByUser:
+                type: "[Task!]!"
+                args:
+                    userId:
+                        type: "String!"
+                resolve: "@=service('App\\\\Infrastructure\\\\GraphQL\\\\Resolver\\\\TaskResolver').tasksByUser(args['userId'])"
+            taskHistory:
+                type: "[TaskEvent!]!"
+                args:
+                    taskId:
+                        type: "String!"
+                resolve: "@=service('App\\\\Infrastructure\\\\GraphQL\\\\Resolver\\\\TaskResolver').taskHistory(args['taskId'])"
