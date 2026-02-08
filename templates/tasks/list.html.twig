@@ -1,0 +1,207 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tasks - TaskManager{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="#">TaskManager</a>
+        <div class="d-flex align-items-center">
+            <a href="{{ path('web_users') }}" class="nav-link me-3">Users</a>
+            <a href="{{ path('web_tasks') }}" class="nav-link me-3 fw-bold">Tasks</a>
+            <span class="navbar-text me-3">
+                {{ app.user.name }}
+                <span class="badge {{ app.user.role.value == 'ROLE_ADMIN' ? 'badge-admin' : 'badge-member' }}">
+                    {{ app.user.role.value == 'ROLE_ADMIN' ? 'Admin' : 'Member' }}
+                </span>
+            </span>
+            <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block body %}
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">{{ message }}</div>
+{% endfor %}
+{% for message in app.flashes('error') %}
+    <div class="alert alert-danger">{{ message }}</div>
+{% endfor %}
+
+<div class="card">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">{{ isAdmin ? 'All Tasks' : 'My Tasks' }} ({{ tasks|length }})</h5>
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createTaskModal">Create Task</button>
+    </div>
+
+    <div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="createTaskModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="{{ path('web_tasks_create') }}">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createTaskModalLabel">Create Task</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="title" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                        </div>
+                        {% if isAdmin %}
+                        <div class="mb-3">
+                            <label for="assignedUserId" class="form-label">Assign To</label>
+                            <select class="form-select" id="assignedUserId" name="assignedUserId" required>
+                                <option value="">-- Select user --</option>
+                                {% for user in users %}
+                                    <option value="{{ user.id }}">{{ user.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create Task</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body border-bottom py-2 px-3">
+        <form method="get" action="{{ path('web_tasks') }}">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <input type="text" class="form-control form-control-sm" name="title" placeholder="Filter by title..." value="{{ filters.title ?? '' }}">
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control form-control-sm" name="description" placeholder="Filter by description..." value="{{ filters.description ?? '' }}">
+                </div>
+                {% if isAdmin %}
+                <div class="col-md-3">
+                    <select class="form-select form-select-sm" name="assignedUserId">
+                        <option value="">All users</option>
+                        {% for user in users %}
+                            <option value="{{ user.id }}" {{ (filters.assignedUserId ?? '') == user.id ? 'selected' : '' }}>{{ user.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+                <div class="col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary">Filter</button>
+                    {% if filters is not empty %}
+                        <a href="{{ path('web_tasks') }}" class="btn btn-sm btn-outline-danger">Clear</a>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="p-0">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    {% if isAdmin %}<th>Assigned To</th>{% endif %}
+                    <th>Created</th>
+                    <th>Updated</th>
+                    <th class="text-end" style="width: 160px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                {% set assignedUser = users[task.assignedUserId] ?? null %}
+                <tr>
+                    <td>{{ task.title }}</td>
+                    <td><small class="text-muted">{{ task.description|length > 50 ? task.description|slice(0, 50) ~ '...' : task.description }}</small></td>
+                    <td>
+                        {% if task.status == 'TODO' %}
+                            <span class="badge bg-secondary">To Do</span>
+                        {% elseif task.status == 'IN_PROGRESS' %}
+                            <span class="badge" style="background-color: #2563eb;">In Progress</span>
+                        {% else %}
+                            <span class="badge bg-success">Done</span>
+                        {% endif %}
+                    </td>
+                    {% if isAdmin %}<td>{{ assignedUser ? assignedUser.name : task.assignedUserId }}</td>{% endif %}
+                    <td><small class="text-muted">{{ task.createdAt }}</small></td>
+                    <td><small class="text-muted">{{ task.updatedAt }}</small></td>
+                    <td class="text-end">
+                        <div class="d-inline-flex gap-1 align-items-center">
+                            {% if task.status == 'TODO' %}
+                                <form method="post" action="{{ path('web_tasks_update_status', {id: task.id}) }}">
+                                    <input type="hidden" name="status" value="IN_PROGRESS">
+                                    <button type="submit" class="btn btn-sm btn-primary">Start</button>
+                                </form>
+                            {% elseif task.status == 'IN_PROGRESS' %}
+                                <form method="post" action="{{ path('web_tasks_update_status', {id: task.id}) }}">
+                                    <input type="hidden" name="status" value="DONE">
+                                    <button type="submit" class="btn btn-sm btn-success">Done</button>
+                                </form>
+                            {% endif %}
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="showHistory('{{ task.id }}', '{{ task.title|e('js') }}')">History</button>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="{{ isAdmin ? 7 : 6 }}" class="text-center text-muted py-4">No tasks yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="historyModal" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="historyModalLabel">Task History</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="historyModalBody">
+                <p class="text-muted">Loading...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showHistory(taskId, taskTitle) {
+    document.getElementById('historyModalLabel').textContent = 'History: ' + taskTitle;
+    document.getElementById('historyModalBody').innerHTML = '<p class="text-muted">Loading...</p>';
+    new bootstrap.Modal(document.getElementById('historyModal')).show();
+
+    fetch('/panel/tasks/' + taskId + '/history')
+        .then(r => r.json())
+        .then(events => {
+            if (events.length === 0) {
+                document.getElementById('historyModalBody').innerHTML = '<p class="text-muted">No events recorded.</p>';
+                return;
+            }
+            let html = '<ul class="list-group list-group-flush">';
+            events.forEach(e => {
+                let label = '';
+                if (e.eventType === 'TaskCreatedEvent') {
+                    label = 'Task created (status: ' + e.payload.status + ')';
+                } else if (e.eventType === 'TaskStatusUpdatedEvent') {
+                    label = e.payload.previousStatus + ' &rarr; ' + e.payload.newStatus;
+                }
+                html += '<li class="list-group-item d-flex justify-content-between align-items-center">'
+                    + '<span>' + label + '</span>'
+                    + '<small class="text-muted">' + e.occurredAt + '</small>'
+                    + '</li>';
+            });
+            html += '</ul>';
+            document.getElementById('historyModalBody').innerHTML = html;
+        });
+}
+</script>
+{% endblock %}

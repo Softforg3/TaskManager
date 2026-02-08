@@ -15,7 +15,7 @@ final class LoginController extends AbstractController
     public function login(AuthenticationUtils $authUtils): Response
     {
         if ($this->getUser()) {
-            return $this->redirectToRoute('web_users');
+            return $this->redirectToRoute('web_tasks');
         }
 
         return $this->render('login.html.twig', [
