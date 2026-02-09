@@ -6,8 +6,10 @@ namespace App\Tests\Unit\Application\Task\Factory;
 
 use App\Application\Task\Factory\TaskFactory;
 use App\Domain\Task\ValueObject\TaskId;
+use App\Domain\Shared\Exception\ValidationException;
 use App\Domain\Task\Enum\TaskStatus;
 use App\Domain\User\ValueObject\UserId;
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
 class TaskFactoryTest extends TestCase
@@ -47,13 +49,13 @@ class TaskFactoryTest extends TestCase
     {
         $task = $this->factory->create(TaskId::generate(), 'Task', 'Desc', UserId::generate());
 
-        $this->assertInstanceOf(\DateTimeImmutable::class, $task->getCreatedAt());
-        $this->assertInstanceOf(\DateTimeImmutable::class, $task->getUpdatedAt());
+        $this->assertInstanceOf(DateTimeImmutable::class, $task->getCreatedAt());
+        $this->assertInstanceOf(DateTimeImmutable::class, $task->getUpdatedAt());
     }
 
     public function testCreateWithEmptyTitleThrowsException(): void
     {
-        $this->expectException(\App\Domain\Shared\Exception\ValidationException::class);
+        $this->expectException(ValidationException::class);
         $this->expectExceptionMessage('Field "title" cannot be empty.');
 
         $this->factory->create(TaskId::generate(), '', 'Description', UserId::generate());
@@ -61,7 +63,7 @@ class TaskFactoryTest extends TestCase
 
     public function testCreateWithWhitespaceTitleThrowsException(): void
     {
-        $this->expectException(\App\Domain\Shared\Exception\ValidationException::class);
+        $this->expectException(ValidationException::class);
 
         $this->factory->create(TaskId::generate(), '   ', 'Description', UserId::generate());
     }

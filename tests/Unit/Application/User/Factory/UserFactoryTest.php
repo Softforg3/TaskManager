@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\User\Factory;
 
 use App\Application\User\Factory\UserFactory;
+use App\Domain\Shared\Exception\ValidationException;
 use App\Domain\User\Enum\UserRole;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -61,7 +62,7 @@ class UserFactoryTest extends TestCase
 
     public function testCreateWithMissingFieldThrowsException(): void
     {
-        $this->expectException(\App\Domain\Shared\Exception\ValidationException::class);
+        $this->expectException(ValidationException::class);
         $this->expectExceptionMessage('Field "name" cannot be empty.');
 
         $this->factory->createFromApiData([
@@ -73,7 +74,7 @@ class UserFactoryTest extends TestCase
 
     public function testCreateWithEmptyNameThrowsException(): void
     {
-        $this->expectException(\App\Domain\Shared\Exception\ValidationException::class);
+        $this->expectException(ValidationException::class);
         $this->expectExceptionMessage('Field "name" cannot be empty.');
 
         $this->factory->createFromApiData([
@@ -86,7 +87,7 @@ class UserFactoryTest extends TestCase
 
     public function testCreateWithEmptyEmailThrowsException(): void
     {
-        $this->expectException(\App\Domain\Shared\Exception\ValidationException::class);
+        $this->expectException(ValidationException::class);
         $this->expectExceptionMessage('Field "email" cannot be empty.');
 
         $this->factory->createFromApiData([

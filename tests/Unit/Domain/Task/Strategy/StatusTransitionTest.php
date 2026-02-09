@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Domain\Task\Strategy;
 use App\Domain\Task\Strategy\InProgressToDoneStrategy;
 use App\Domain\Task\Strategy\StatusTransitionResolver;
 use App\Domain\Task\Strategy\TodoToInProgressStrategy;
+use App\Domain\Shared\Exception\InvalidStatusTransitionException;
 use App\Domain\Task\Enum\TaskStatus;
 use PHPUnit\Framework\TestCase;
 
@@ -38,7 +39,7 @@ class StatusTransitionTest extends TestCase
 
     public function testResolveThrowsOnTodoToDone(): void
     {
-        $this->expectException(\App\Domain\Shared\Exception\InvalidStatusTransitionException::class);
+        $this->expectException(InvalidStatusTransitionException::class);
         $this->expectExceptionMessage('Cannot transition task status from "TODO" to "DONE".');
 
         $this->resolver->resolve(TaskStatus::TODO, TaskStatus::DONE);
@@ -46,28 +47,28 @@ class StatusTransitionTest extends TestCase
 
     public function testResolveThrowsOnDoneToTodo(): void
     {
-        $this->expectException(\App\Domain\Shared\Exception\InvalidStatusTransitionException::class);
+        $this->expectException(InvalidStatusTransitionException::class);
 
         $this->resolver->resolve(TaskStatus::DONE, TaskStatus::TODO);
     }
 
     public function testResolveThrowsOnDoneToInProgress(): void
     {
-        $this->expectException(\App\Domain\Shared\Exception\InvalidStatusTransitionException::class);
+        $this->expectException(InvalidStatusTransitionException::class);
 
         $this->resolver->resolve(TaskStatus::DONE, TaskStatus::IN_PROGRESS);
     }
 
     public function testResolveThrowsOnInProgressToTodo(): void
     {
-        $this->expectException(\App\Domain\Shared\Exception\InvalidStatusTransitionException::class);
+        $this->expectException(InvalidStatusTransitionException::class);
 
         $this->resolver->resolve(TaskStatus::IN_PROGRESS, TaskStatus::TODO);
     }
 
     public function testResolveThrowsOnSameStatus(): void
     {
-        $this->expectException(\App\Domain\Shared\Exception\InvalidStatusTransitionException::class);
+        $this->expectException(InvalidStatusTransitionException::class);
 
         $this->resolver->resolve(TaskStatus::TODO, TaskStatus::TODO);
     }
